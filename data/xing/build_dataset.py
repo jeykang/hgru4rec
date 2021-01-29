@@ -17,7 +17,7 @@ def remap_columns(data, columns):
     return data, maps
 
 
-def make_sessions(data, session_th=30 * 60, is_ordered=False, user_key='user_id', item_key='item_id', time_key='ts'):
+def make_sessions(data, session_th=120 * 60, is_ordered=False, user_key='user_id', item_key='item_id', time_key='ts'):
     """Assigns session ids to the events in data without grouping keys"""
     if not is_ordered:
         # sort data by user and time
@@ -136,7 +136,7 @@ good_sessions = session_length[session_length >= 3].index
 inter_dense = inter_dense[inter_dense.session_id.isin(good_sessions)]
 # let's keep only returning users (with >= 5 sessions) and remove overly active ones (>=200 sessions)
 sess_per_user = inter_dense.groupby('user_id')['session_id'].nunique()
-good_users = sess_per_user[(sess_per_user >= 5) & (sess_per_user < 200)].index
+good_users = sess_per_user[(sess_per_user >= 5)].index #& (sess_per_user < 200)].index
 inter_dense = inter_dense[inter_dense.user_id.isin(good_users)]
 print('Filtered data:')
 print('Num items: {}'.format(inter_dense.item_id.nunique()))
